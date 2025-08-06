@@ -15,15 +15,5 @@ public class User {
         return username;
     }
 
-    public boolean checkPassword(String inputPassword) {
-        return this.password.equals(inputPassword);
-    }
 
-    public int getScore() {
-        return score;
-    }
-
-    public void addScore(int delta) {
-        this.score += delta;
-    }
 }
