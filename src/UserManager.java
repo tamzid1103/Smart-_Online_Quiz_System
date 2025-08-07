@@ -147,12 +147,65 @@ public class UserManager {
             handleSQLError("Detailed Leaderboard", e);
         }
     }
+    // View all questions (for teachers)
+    public void showAllQuestions() {
+        String sql = "SELECT * FROM questions ORDER BY id ASC";
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            System.out.println("\n📝 All Quiz Questions:");
+            System.out.println("=" .repeat(60));
+            int totalCount = 0;
+            while (rs.next()) {
+                int questionId = rs.getInt("id");
+                System.out.println("Question ID: " + questionId);
+                System.out.println("Q: " + rs.getString("question_text"));
+                System.out.println("1. " + rs.getString("option1"));
+                System.out.println("2. " + rs.getString("option2"));
+                System.out.println("3. " + rs.getString("option3"));
+                System.out.println("4. " + rs.getString("option4"));
+                System.out.println("Correct Answer: " + (rs.getInt("correct_option") + 1));
+                System.out.println("-".repeat(40));
+                totalCount++;
+            }
+            System.out.println("Total Questions: " + totalCount + "\n");
+        } catch (SQLException e) {
+            handleSQLError("View Questions", e);
+        }
+    }
 
 
+    // Add new question (for teachers)
+    public boolean addQuestion(String questionText, String option1, String option2, String option3, String option4, int correctOption) {
+        String sql = "INSERT INTO questions (question_text, option1, option2, option3, option4, correct_option) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, questionText);
+            ps.setString(2, option1);
+            ps.setString(3, option2);
+            ps.setString(4, option3);
+            ps.setString(5, option4);
+            ps.setInt(6, correctOption - 1); // Convert 1-4 to 0-3 for database
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            handleSQLError("Add Question", e);
+            return false;
+        }
+    }
 
-
-
-
-
+    // Delete a question by ID (for teachers)
+    public boolean deleteQuestion(int questionId) {
+        String sql = "DELETE FROM questions WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, questionId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            handleSQLError("Delete Question", e);
+            return false;
+        }
+    }
 
 }
