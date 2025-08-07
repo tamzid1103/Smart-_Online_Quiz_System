@@ -13,7 +13,5 @@ public class Teacher {
         return username;
     }
 
-    public boolean checkPassword(String inputPassword) {
-        return this.password.equals(inputPassword);
-    }
+
 }
