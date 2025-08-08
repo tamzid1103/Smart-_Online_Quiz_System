@@ -194,6 +194,20 @@ public class UserManager {
         }
     }
 
+    // Delete/Unregister a student by username (for teachers)
+    public boolean deleteStudent(String username) {
+        String sql = "DELETE FROM users WHERE username = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            handleSQLError("Delete Student", e);
+            return false;
+        }
+    }
+
     // Delete a question by ID (for teachers)
     public boolean deleteQuestion(int questionId) {
         String sql = "DELETE FROM questions WHERE id = ?";
